@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ENjdO4Dr2bkBIFxQpeoYz1H6V9zzTtmI1z9+8mG1pG1h5v9W9Kf5t9XK5R5FQ2J" crossorigin="anonymous">
+    <style>
+        /* Gradient background */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .weather-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        .weather-icon {
+            width: 80px;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card weather-card p-4">
+            <h1 class="text-center mb-4">Weather Dashboard</h1>
+            <div class="row g-2 mb-3">
+                <div class="col-8 col-sm-9">
+                    <input type="text" id="city-input" class="form-control" placeholder="Enter city name">
+                </div>
+                <div class="col-4 col-sm-3">
+                    <button id="search-btn" class="btn btn-primary w-100">Search</button>
+                </div>
+            </div>
+            <div class="text-center">
+                <img src="https://cdn.jsdelivr.net/gh/erikflowers/weather-icons@master/svg/wi-day-sunny.svg" alt="Weather Icon" class="weather-icon mb-3" id="weather-icon">
+                <div id="temperature" class="display-4 fw-bold">72°F</div>
+                <div id="city-name" class="mt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-q2g0Qv2B+1vV5z5c0T+gXbZKp2V6b+7fV5Qh1K9K9VxG1X5vQk5R6e2tZV6Xc6K" crossorigin="anonymous"></script>
+    <script>
+        // Simple mock weather data (in a real app you'd call an API)
+        const mockWeather = {
+            "new york": { temp: "68°F", icon: "wi-day-cloudy" },
+            "london": { temp: "55°F", icon: "wi-cloudy" },
+            "paris": { temp: "60°F", icon: "wi-day-sunny-overcast" },
+            "tokyo": { temp: "70°F", icon: "wi-day-sunny" }
+        };
+
+        const cityInput = document.getElementById('city-input');
+        const searchBtn = document.getElementById('search-btn');
+        const temperatureDiv = document.getElementById('temperature');
+        const cityNameDiv = document.getElementById('city-name');
+        const weatherIconImg = document.getElementById('weather-icon');
+
+        // Helper to get icon URL from weather-icons repo
+        function getIconUrl(iconName) {
+            return `https://cdn.jsdelivr.net/gh/erikflowers/weather-icons@master/svg/${iconName}.svg`;
+        }
+
+        function updateWeather(city) {
+            const key = city.toLowerCase().trim();
+            const data = mockWeather[key];
+            if (data) {
+                temperatureDiv.textContent = data.temp;
+                weatherIconImg.src = getIconUrl(data.icon);
+                cityNameDiv.textContent = city;
+            } else {
+                // Fallback: random temperature
+                const randomTemp = Math.floor(Math.random() * 40) + 50; // 50-90°F
+                temperatureDiv.textContent = `${randomTemp}°F`;
+                weatherIconImg.src = getIconUrl('wi-day-sunny');
+                cityNameDiv.textContent = city;
+            }
+        }
+
+        searchBtn.addEventListener('click', () => {
+            const city = cityInput.value;
+            if (!city) {
+                alert('Please enter a city name.');
+                return;
+            }
+            try {
+                updateWeather(city);
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred while fetching weather data.');
+            }
+        });
+
+        // Allow pressing Enter to trigger search
+        cityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
